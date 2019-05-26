@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <title>FairestAPI - Example</title>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js'></script>
+  <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'></script>
+  <script src='https://s3.amazonaws.com/orbitsolve-library/js/os-lib-html.js' text='text/javascript'></script>
+  <script>
+    function submitRequest() {
+      // Remove current data result, if any
+      $('#divData').empty();
+      // Get Method from Label
+      var method = $('#epMethod').text();
+      // Get Endpoint URL from Input
+      var url = $('#epURL').val();
+      $.ajax({
+        type: method,
+        url: url,
+        contentType: 'application/json',
+        success: function (result, status, xhr) {
+          // Process success response
+          $('#resultTitle').text('Countries');
+          $('#resultTitle').addClass('text-info');
+          if (result && result.length > 0) {
+            // Converting result to <table> using os-lib-html.js
+            var table = ConvertJSONArrayToHTMLTable(result);
+            $('#resultInfo').text('Successfully fetched ' + result.length + ' item(s)');
+            $('#resultInfo').addClass('text-success');
+            $('#divData').append(table);
+          } else {
+            $('#resultInfo').text('No items found');
+            $('#resultInfo').addClass('text-danger');
+          }
+        },
+        error: function (xhr, status, error) {
+          // Process error response
+          $('#resultTitle').text('Error');
+          $('#resultTitle').addClass('text-danger');
+          $('#resultInfo').text(status + ' - ' + error);
+          $('#resultInfo').addClass('text-danger');
+        }
+      });
+    }
+  </script>
+</head>
+<body>
+  <div id='divTitle' class='container'>
+    <div class='row'>
+      <div class='col-12'>
+        <h1 class='text-danger'>Pedia API</h1>
+        <p>Sample demo to test REST API endpoint created using FairestAPI</p>
+        <div class='input-group mb-3'>
+          <div class='input-group-prepend'><span id='epMethod' class='input-group-text'>GET</span></div>
+          <input id='epURL' type='text' class='form-control' value='https://pedia.orbitsolve.com/v1/world/countries'>
+        </div>
+        <button class='btn btn-success mb-3' onclick='submitRequest()'>GET Countries</button>
+      </div>
+    </div>
+  </div>
+  <div id='divResult' class='container'>
+    <div class='row'>
+      <div class='col-12'>
+        <h2 id='resultTitle'></h2>
+        <h5 id='resultInfo'></h5>
+        <div id='divData'></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
